@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desperte o Guerreiro Interior | Você está pronto?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --preto: #070707;
+    --cinza-escuro: #0F0F0F;
+    --cinza-medio: #1A1A1A;
+    --dourado: #C9A84C;
+    --dourado-vivo: #F0C040;
+    --dourado-escuro: #8B6914;
+    --dourado-bg: #0D0900;
+    --vermelho: #8B0000;
+    --vermelho-vivo: #CC2200;
+    --branco: #F5F0E8;
+    --cinza-texto: #BBBBBB;
+    --cinza-sub: #666666;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: var(--preto);
+    color: var(--branco);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* LANDING PAGE */
+  #landing {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(139,0,0,0.08) 0%, transparent 50%),
+      linear-gradient(180deg, #070707 0%, #0A0800 50%, #070707 100%);
+  }
+
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .corner-deco {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    opacity: 0.4;
+  }
+  .corner-deco.tl { top: 20px; left: 20px; border-top: 1px solid var(--dourado); border-left: 1px solid var(--dourado); }
+  .corner-deco.tr { top: 20px; right: 20px; border-top: 1px solid var(--dourado); border-right: 1px solid var(--dourado); }
+  .corner-deco.bl { bottom: 20px; left: 20px; border-bottom: 1px solid var(--dourado); border-left: 1px solid var(--dourado); }
+  .corner-deco.br { bottom: 20px; right: 20px; border-bottom: 1px solid var(--dourado); border-right: 1px solid var(--dourado); }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 60px 24px 40px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--dourado);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(36px, 9vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--branco);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s both;
+  }
+
+  .hero-title .gold { color: var(--dourado-vivo); }
+
+  .hero-divider {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+    margin: 24px auto;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.6s both;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 4vw, 20px);
+    font-style: italic;
+    color: var(--cinza-texto);
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.7s both;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s both;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--dourado);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--cinza-sub);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--dourado-escuro), var(--dourado), var(--dourado-escuro));
+    background-size: 200% 100%;
+    color: var(--preto);
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px 40px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1s both;
+    text-decoration: none;
+  }
+
+  .cta-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--dourado-vivo), var(--dourado));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .cta-btn:hover::before { opacity: 1; }
+  .cta-btn span { position: relative; z-index: 1; }
+
+  .cta-sub {
+    font-size: 12px;
+    color: var(--cinza-sub);
+    margin-top: 14px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 1.1s both;
+  }
+
+  /* FEATURES */
+  .features {
+    position: relative;
+    z-index: 10;
+    padding: 0 24px 60px;
+  }
+
+  .features-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.1);
+    opacity: 0;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .feature-item:nth-child(1) { animation-delay: 1.2s; }
+  .feature-item:nth-child(2) { animation-delay: 1.3s; }
+  .feature-item:nth-child(3) { animation-delay: 1.4s; }
+  .feature-item:nth-child(4) { animation-delay: 1.5s; }
+
+  .feature-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .feature-text {
+    font-size: 14px;
+    color: var(--cinza-texto);
+    line-height: 1.4;
+  }
+
+  .feature-text strong {
+    color: var(--branco);
+    font-weight: 600;
+  }
+
+  /* QUIZ CONTAINER */
+  #quiz {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quiz-bg {
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 50%, rgba(139,0,0,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.06) 0%, transparent 50%),
+      #070707;
+  }
+
+  .quiz-inner {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 24px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .progress-bar-wrap {
+    margin-bottom: 40px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--cinza-sub);
+    margin-bottom: 8px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dourado-escuro), var(--dourado-vivo));
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .question-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .q-number {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dourado);
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .q-text {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 5vw, 28px);
+    font-weight: 700;
+    color: var(--branco);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .q-sub {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--cinza-sub);
+    margin-bottom: 36px;
+    line-height: 1.5;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option {
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--cinza-texto);
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--dourado);
+    transform: scaleY(0);
+    transition: transform 0.2s;
+  }
+
+  .option:hover {
+    background: rgba(201,168,76,0.08);
+    border-color: rgba(201,168,76,0.3);
+    color: var(--branco);
+  }
+
+  .option:hover::before { transform: scaleY(1); }
+
+  .option.selected {
+    background: rgba(201,168,76,0.12);
+    border-color: var(--dourado);
+    color: var(--branco);
+  }
+
+  .option.selected::before { transform: scaleY(1); }
+
+  /* RESULT PAGE */
+  #result {
+    display: none;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(201,168,76,0.15) 0%, transparent 60%),
+      #070707;
+  }
+
+  .result-inner {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px 40px;
+    text-align: center;
+  }
+
+  .result-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--dourado-escuro), var(--dourado));
+    color: var(--preto);
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    margin-bottom: 28px;
+  }
+
+  .result-score-ring {
+    width: 120px;
+    height: 120px;
+    border: 2px solid var(--dourado);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+
+  .result-score-ring::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50%;
+  }
+
+  .result-score {
+    font-family: 'Cinzel', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--dourado-vivo);
+    line-height: 1;
+  }
+
+  .result-score small {
+    font-size: 14px;
+    color: var(--cinza-sub);
+    display: block;
+    font-weight: 400;
+  }
+
+  .result-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(24px, 7vw, 38px);
+    font-weight: 900;
+    color: var(--branco);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .result-title .gold { color: var(--dourado-vivo); }
+
+  .result-desc {
+    font-size: 16px;
+    font-style: italic;
+    color: var(--cinza-texto);
+    line-height: 1.7;
+    max-width: 360px;
+    margin: 0 auto 36px;
+  }
+
+  .verdict-box {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .verdict-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dourado);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .verdict-text {
+    font-size: 15px;
+    color: var(--cinza-texto);
+    line-height: 1.6;
+  }
+
+  .result-cta {
+    display: block;
+    background: linear-gradient(135deg, var(--dourado-escuro), var(--dourado-vivo), var(--dourado-escuro));
+    background-size: 200% 100%;
+    color: var(--preto);
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 20px 36px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 12px;
+    animation: glowPulse 2.5s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+
+  .result-cta:active { transform: scale(0.98); }
+
+  .result-cta-sub {
+    font-size: 11px;
+    color: var(--cinza-sub);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.3); }
+    50% { box-shadow: 0 0 40px rgba(201,168,76,0.6); }
+  }
+
+  .fade-in {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* TRANSITION */
+  .page { transition: opacity 0.3s ease; }
+</style>
+</head>
+<body>
+
+<!-- LANDING PAGE -->
+<div id="landing" class="page">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco tr"></div>
+  <div class="corner-deco bl"></div>
+  <div class="corner-deco br"></div>
+
+  <div class="hero-content">
+    <span class="eyebrow">⚔ Filosofia Estoica • Programa de 7 Dias</span>
+
+    <h1 class="hero-title">
+      Desperte o<br>
+      <span class="gold">Guerreiro</span><br>
+      Interior
+    </h1>
+
+    <div class="hero-divider"></div>
+
+    <p class="hero-sub">
+      Os princípios que Marco Aurélio, Sêneca e Epicteto usaram para forjar mentes invencíveis — aplicados à sua vida agora.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-num">7</span>
+        <span class="stat-label">Dias</span>
+      </div>
+      <div class="stat" style="border-left: 1px solid rgba(201,168,76,0.2); border-right: 1px solid rgba(201,168,76,0.2); padding: 0 32px;">
+        <span class="stat-num">2000</span>
+        <span class="stat-label">Anos de sabedoria</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">1</span>
+        <span class="stat-label">Decisão</span>
+      </div>
+    </div>
+
+    <button class="cta-btn" onclick="startQuiz()">
+      <span>Fazer o Teste Agora →</span>
+    </button>
+    <p class="cta-sub">Descubra se você está pronto para os 7 dias • Grátis</p>
+  </div>
+
+  <div class="features">
+    <div class="features-grid">
+      <div class="feature-item">
+        <span class="feature-icon">📜</span>
+        <span class="feature-text"><strong>7 módulos</strong> liberados dia a dia — um princípio por vez</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">⚔️</span>
+        <span class="feature-text"><strong>Exercícios práticos</strong> baseados nos estoicos originais</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔥</span>
+        <span class="feature-text"><strong>Plano de 30 dias</strong> para consolidar a transformação</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏛️</span>
+        <span class="feature-text"><strong>Marco Aurélio • Sêneca • Epicteto</strong> — filosofia real</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="page">
+  <div class="quiz-bg"></div>
+  <div class="quiz-inner">
+    <div class="progress-bar-wrap">
+      <div class="progress-label">
+        <span>PROGRESSO</span>
+        <span id="progressText">0 / 7</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="question-wrap" id="questionWrap">
+      <!-- Questions rendered by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="page">
+  <div class="result-bg"></div>
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco tr"></div>
+
+  <div class="result-inner">
+    <div class="result-badge">⚔ Análise Completa</div>
+
+    <div class="result-score-ring">
+      <div class="result-score">
+        <span id="scoreNum">0</span>
+        <small>pontos</small>
+      </div>
+    </div>
+
+    <h2 class="result-title" id="resultTitle">Você tem potencial.<br>Mas precisa <span class="gold">ser forjado.</span></h2>
+
+    <p class="result-desc" id="resultDesc">Suas respostas revelam um homem que ainda não descobriu toda sua força.</p>
+
+    <div class="verdict-box">
+      <div class="verdict-label">Veredito do Guerreiro</div>
+      <div class="verdict-text" id="verdictText">O estoicismo vai te desafiar. E é exatamente isso que você precisa.</div>
+    </div>
+
+    <a href="SEU_LINK_CAKTO_AQUI" class="result-cta">
+      Quero os 7 Dias Agora →
+    </a>
+    <p class="result-cta-sub">🔒 Acesso imediato • R$27 • Garantia de 7 dias</p>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "Quando algo foge do seu controle, qual é sua reação?",
+      sub: "Seja honesto. O guerreiro começa pela verdade.",
+      options: [
+        { text: "Fico ansioso e fico pensando no que poderia ter sido diferente", pts: 1 },
+        { text: "Reclamo por um tempo, mas depois aceito", pts: 2 },
+        { text: "Identifico o que posso controlar e foco nisso", pts: 3 },
+        { text: "Age imediatamente sem perder energia com o que passou", pts: 4 },
+      ]
+    },
+    {
+      q: "Qual é sua relação com o desconforto físico?",
+      sub: "Banho frio, acordar cedo, exercício quando não quer.",
+      options: [
+        { text: "Evito sempre que posso — prefiro o conforto", pts: 1 },
+        { text: "Enfrento quando necessário, mas não procuro", pts: 2 },
+        { text: "Às vezes me desafio deliberadamente", pts: 3 },
+        { text: "Busco o desconforto — sei que ele me forja", pts: 4 },
+      ]
+    },
+    {
+      q: "Você tem um propósito claro para sua vida?",
+      sub: "Não uma ideia vaga. Uma direção real.",
+      options: [
+        { text: "Não sei ao certo para onde estou indo", pts: 1 },
+        { text: "Tenho uma ideia, mas ainda não é clara", pts: 2 },
+        { text: "Tenho um propósito, mas ainda não agi totalmente por ele", pts: 3 },
+        { text: "Sim — e cada decisão que tomo está alinhada a ele", pts: 4 },
+      ]
+    },
+    {
+      q: "Como você lida com críticas ou provocações?",
+      sub: "O guerreiro que reage é escravo de quem o provoca.",
+      options: [
+        { text: "Fico irritado e reajo na hora", pts: 1 },
+        { text: "Me afeto, mas consigo me controlar depois", pts: 2 },
+        { text: "Pauso antes de responder na maioria das vezes", pts: 3 },
+        { text: "Ouço, avalia o que tem valor, e age com calma", pts: 4 },
+      ]
+    },
+    {
+      q: "Com que frequência você pensa na sua própria mortalidade?",
+      sub: "Memento Mori — o combustível da ação estoica.",
+      options: [
+        { text: "Nunca — prefiro não pensar nisso", pts: 1 },
+        { text: "Raramente, só quando algo me lembra", pts: 2 },
+        { text: "Às vezes — e isso me motiva a agir", pts: 3 },
+        { text: "Regularmente — é o que me mantém urgente", pts: 4 },
+      ]
+    },
+    {
+      q: "Você tem rituais diários fixos?",
+      sub: "Diário, meditação, exercício, leitura — algo constante.",
+      options: [
+        { text: "Não tenho nenhuma rotina estruturada", pts: 1 },
+        { text: "Tenho alguns hábitos, mas são inconsistentes", pts: 2 },
+        { text: "Tenho uma rotina razoável que sigo a maioria dos dias", pts: 3 },
+        { text: "Sim — rituais diários fixos que raramente quebro", pts: 4 },
+      ]
+    },
+    {
+      q: "Se você começar os 7 dias agora, qual é a maior ameaça?",
+      sub: "A resposta honesta revela o seu verdadeiro inimigo.",
+      options: [
+        { text: "Vou desistir quando ficar difícil", pts: 1 },
+        { text: "Provavelmente vou pular alguns dias", pts: 2 },
+        { text: "Posso perder o ritmo em momentos de estresse", pts: 3 },
+        { text: "Nada — quando decido, termino", pts: 4 },
+      ]
+    },
+  ];
+
+  let current = 0;
+  let totalScore = 0;
+  let answers = [];
+
+  function startQuiz() {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('quiz').style.display = 'block';
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = questions[current];
+    const pct = (current / questions.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = current + ' / ' + questions.length;
+
+    const wrap = document.getElementById('questionWrap');
+    wrap.innerHTML = `
+      <div class="fade-in">
+        <div class="q-number">PERGUNTA ${current + 1} DE ${questions.length}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="q-sub">${q.sub}</div>
+        <div class="options">
+          ${q.options.map((opt, i) => `
+            <button class="option" onclick="selectOption(${opt.pts}, this)">
+              ${opt.text}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function selectOption(pts, el) {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+
+    setTimeout(() => {
+      totalScore += pts;
+      answers.push(pts);
+      current++;
+
+      if (current >= questions.length) {
+        showResult();
+      } else {
+        renderQuestion();
+      }
+    }, 400);
+  }
+
+  function showResult() {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressText').textContent = '7 / 7';
+
+    setTimeout(() => {
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+
+      const max = questions.length * 4;
+      const pct = Math.round((totalScore / max) * 100);
+      document.getElementById('scoreNum').textContent = totalScore;
+
+      let title, desc, verdict;
+
+      if (totalScore <= 10) {
+        title = 'O Guerreiro<br>ainda <span class="gold">dorme.</span>';
+        desc = 'Suas respostas revelam um homem que sente que há algo maior dentro dele — mas ainda não encontrou o caminho para acordar. Este programa foi feito para você.';
+        verdict = 'Você precisa dos 7 dias mais do que qualquer outro. O estoicismo vai te dar o que o mundo moderno tirou: clareza, direção e força interior.';
+      } else if (totalScore <= 18) {
+        title = 'Você tem a<br><span class="gold">chama acesa.</span>';
+        desc = 'Você já tem consciência e alguma disciplina — mas sente que ainda não chegou onde deveria. O estoicismo vai sistematizar o que você já intuiu.';
+        verdict = 'Você está no momento certo. Os 7 dias vão transformar o que é instinto em método — e o que é potencial em resultado real.';
+      } else if (totalScore <= 24) {
+        title = 'O guerreiro<br><span class="gold">está desperto.</span>';
+        desc = 'Você já pratica muito do que o estoicismo ensina — talvez sem saber. Os 7 dias vão aprofundar, sistematizar e elevar o que você já construiu.';
+        verdict = 'Homens como você são raros. Os 7 dias vão te dar as ferramentas que os grandes estoicos usaram — com nome, com prática e com propósito.';
+      } else {
+        title = 'Você é um<br><span class="gold">guerreiro nato.</span>';
+        desc = 'Suas respostas revelam alguém que já vive pelo código estoico — consciente ou não. Os 7 dias vão dar linguagem, profundidade e método ao que você já é.';
+        verdict = 'Você chegou ao nível que poucos atingem. Os 7 dias são o mapa que faltava para quem já está no caminho mas quer ir mais fundo.';
+      }
+
+      document.getElementById('resultTitle').innerHTML = title;
+      document.getElementById('resultDesc').textContent = desc;
+      document.getElementById('verdictText').textContent = verdict;
+    }, 300);
+  }
+</script>
+</body>
+</html>
